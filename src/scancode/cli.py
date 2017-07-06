@@ -363,13 +363,15 @@ def validate_exclusive(ctx, exclusive_options):
 @click.option('--diag', is_flag=True, default=False, help='Include additional diagnostic information such as error messages or result details.', group=CORE, cls=ScanOption)
 @click.option('--timeout', is_flag=False, default=DEFAULT_TIMEOUT, type=float, show_default=True, help='Stop scanning a file if scanning takes longer than a timeout in seconds.', group=CORE, cls=ScanOption)
 @click.option('--reindex-licenses', is_flag=True, default=False, is_eager=True, callback=reindex_licenses, help='Force a check and possible reindexing of the cached license index.', group=MISC, cls=ScanOption)
+@click.option('--config-location', is_flag=False, default=None, type=click.Path(exists=True, readable=True, path_type=str),
+              help='Specifiy scancode config file location.')              
 
 def scancode(ctx,
              input, output_file,
              copyright, license, package,
              email, url, info,
              license_score, license_text, only_findings, strip_root, full_root,
-             format, ignore, verbose, quiet, processes,
+             format, ignore, verbose, quiet, processes, config_location,
              diag, timeout, *args, **kwargs):
     """scan the <input> file or directory for origin clues and license and save results to the <output_file>.
 
@@ -402,6 +404,7 @@ def scancode(ctx,
         ('--full-root', full_root),
         ('--ignore', ignore),
         ('--format', format),
+        ('--config-location', config_location),
         ('--diag', diag),
     ])
 
@@ -425,7 +428,7 @@ def scancode(ctx,
         if options[key] == False:
             del options[key]
 
-    get_licenses_with_score = partial(get_licenses, min_score=license_score, include_text=license_text, diag=diag)
+    get_licenses_with_score = partial(get_licenses, min_score=license_score, include_text=license_text, diag=diag, config_location=config_location)
 
     # List of scan functions in the same order as "possible_scans".
     scan_functions = [
