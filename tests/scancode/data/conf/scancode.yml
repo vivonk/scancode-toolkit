@@ -1,3 +1,9 @@
 license_policies:
-    gpl-2.0: Approved License
-    proprietary: Restricted License
+    broadcom-commercial:
+        color_code: '#FFcc33'
+        api_url: https://enterprise.dejacode.com/api/v2/usage_policies/0ecccbfc-b87e-40c2-b891-0667560a177c/
+        guidelines: "These licenses contain obligations..."
+        uuid: 0ecccbfc-b87e-40c2-b891-0667560a177c
+        label: Restricted License
+        content_type: license
+        icon: icon-warning-sign

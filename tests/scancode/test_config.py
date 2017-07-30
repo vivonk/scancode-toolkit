@@ -40,9 +40,15 @@ class TestConf(FileBasedTesting):
         assert load_conf('/wrong/path/') == {}
         assert load_conf('/') == {}
 
-        expected = {
-            u'license_policies': OrderedDict(
-                [(u'gpl-2.0', u'Approved License'),
-                 (u'proprietary', u'Restricted License')])
-        }
+        expected = OrderedDict([(u'license_policies', 
+            OrderedDict([(u'broadcom-commercial', 
+                OrderedDict([
+                    (u'color_code', u'#FFcc33'), 
+                    (u'api_url', u'https://enterprise.dejacode.com/api/v2/usage_policies/0ecccbfc-b87e-40c2-b891-0667560a177c/'), 
+                    (u'guidelines', u'These licenses contain obligations...'), 
+                    (u'uuid', u'0ecccbfc-b87e-40c2-b891-0667560a177c'), 
+                    (u'label', u'Restricted License'), 
+                    (u'content_type', u'license'), 
+                    (u'icon', u'icon-warning-sign')]))]))])
+        
         assert load_conf(self.get_test_loc('conf/scancode.yml')) == expected
