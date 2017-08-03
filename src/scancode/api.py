@@ -97,7 +97,7 @@ DEJACODE_LICENSE_URL = 'https://enterprise.dejacode.com/urn/urn:dje:license:{}'
 SPDX_LICENSE_URL = 'https://spdx.org/licenses/{}'
 
 
-def get_licenses(location, min_score=0, include_text=False, diag=False, config_location=None):
+def get_licenses(location, min_score=0, include_text=False, diag=False, license_policy=None):
     """
     Yield mappings of license data detected in the file at `location`.
 
@@ -115,10 +115,10 @@ def get_licenses(location, min_score=0, include_text=False, diag=False, config_l
     from licensedcode.cache import get_index
     from licensedcode.cache import get_licenses_db
     from licensedcode.match import get_full_matched_text
-    from scancode.config import load_conf
+    from scancode.license_policy import load_license_policy
 
-    config = load_conf(config_location)
-    policies = config.get('license_policies', {})
+    license_policy = load_license_policy(license_policy)
+    policies = license_policy.get('license_policies', {})
 
     idx = get_index()
     licenses = get_licenses_db()

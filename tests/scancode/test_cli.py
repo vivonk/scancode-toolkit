@@ -59,30 +59,30 @@ actual command outputs as if using a real command line call.
 """
 
 
-def test_config_location_option(monkeypatch):
-	test_dir = test_env.get_test_loc('conf', copy=True)
+def test_license_policy_option(monkeypatch):
+	test_dir = test_env.get_test_loc('license_policy', copy=True)
 	result_file = test_env.get_temp_file('json')
-	config_location = test_env.get_test_loc('conf/config-location.yml')
+	license_policy = test_env.get_test_loc('license_policy/license-policy.yml')
 	
-	result = run_scan_click(['--config-location', config_location, test_dir, result_file], monkeypatch)	
+	result = run_scan_click(['--license-policy', license_policy, test_dir, result_file], monkeypatch)	
 	assert result.exit_code == 0
 	assert 'Scanning done' in result.output
 	assert os.path.exists(result_file)
 	result = open(result_file).read()
-	assert 'config-location.yml' in result
+	assert 'license-policy.yml' in result
 	
 
-def test_config_location_option_with_verbose(monkeypatch):
-	test_dir = test_env.get_test_loc('conf', copy=True)
+def test_license_policy_option_with_verbose(monkeypatch):
+	test_dir = test_env.get_test_loc('license_policy', copy=True)
 	result_file = test_env.get_temp_file('json')
-	config_location = test_env.get_test_loc('conf/config-location-verbose.yml')
+	license_policy = test_env.get_test_loc('license_policy/license-policy-verbose.yml')
 	
-	result = run_scan_click(['--config-location', config_location, '--verbose', test_dir, result_file], monkeypatch)
+	result = run_scan_click(['--license-policy', license_policy, '--verbose', test_dir, result_file], monkeypatch)
 	assert result.exit_code == 0
 	assert 'Scanning done' in result.output
 	assert os.path.exists(result_file)
 	result = open(result_file).read()
-	assert 'config-location-verbose.yml' in result
+	assert 'license-policy-verbose.yml' in result
 
 
 def test_package_option_detects_packages(monkeypatch):

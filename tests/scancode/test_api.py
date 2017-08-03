@@ -95,9 +95,9 @@ class TestAPI(FileBasedTesting):
         assert expected == cops
 
     def test_get_license_with_policy_configuration_blank(self):
-        config = self.get_test_loc('api/no_policy.yml')
+        license_policy = self.get_test_loc('api/no_policy.yml')
         test_file = self.get_test_loc('api/LICENSE.txt')
-        result = api.get_licenses(location=test_file, config_location=config)
+        result = api.get_licenses(location=test_file, license_policy=license_policy)
         expected = [
             OrderedDict([
                 (u'key', u'bsd-new'),
@@ -121,9 +121,9 @@ class TestAPI(FileBasedTesting):
         assert expected == list(result)
 
     def test_get_license_with_policty_configuration_restricted(self):
-        config = self.get_test_loc('api/restricted.yml')
+        license_policy = self.get_test_loc('api/restricted.yml')
         test_file = self.get_test_loc('api/LICENSE.txt')
-        result = api.get_licenses(location=test_file, config_location=config)
+        result = api.get_licenses(location=test_file, license_policy=license_policy)
         
         expected = [
             OrderedDict([
@@ -148,9 +148,9 @@ class TestAPI(FileBasedTesting):
         assert expected == list(result)
 
     def test_get_license_with_policy_configuration_approved(self):
-        config = self.get_test_loc('api/approved.yml')
+        license_policy = self.get_test_loc('api/approved.yml')
         test_file = self.get_test_loc('api/LICENSE.txt')
-        result = api.get_licenses(location=test_file, config_location=config)
+        result = api.get_licenses(location=test_file, license_policy=license_policy)
         
         expected = [
             OrderedDict([

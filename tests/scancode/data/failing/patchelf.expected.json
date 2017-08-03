@@ -6,7 +6,7 @@
     "--strip-root": true,
     "--ignore": [],
     "--format": "json",
-    "--config-location": null
+    "--license-policy": null
   },
   "files_count": 1,
   "files": [

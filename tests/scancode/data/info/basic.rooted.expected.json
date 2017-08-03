@@ -5,7 +5,7 @@
     "--license-score": 0,
     "--ignore": [],
     "--format": "json",
-    "--config-location": null
+    "--license-policy": null
   },
   "files_count": 11,
   "files": [

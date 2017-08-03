@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017 nexB Inc. and others. All rights reserved.
+# Copyright (c) 2015 nexB Inc. and others. All rights reserved.
 # http://nexb.com and https://github.com/nexB/scancode-toolkit/
 # The ScanCode software is licensed under the Apache License version 2.0.
 # Data generated with ScanCode require an acknowledgment.
@@ -22,33 +22,25 @@
 #  ScanCode is a free software code scanning tool from nexB Inc. and others.
 #  Visit https://github.com/nexB/scancode-toolkit/ for support and download.
 
-from __future__ import absolute_import, print_function
+from __future__ import print_function, absolute_import
 
-from collections import OrderedDict
-import os
+from os.path import abspath
+from os.path import dirname
+from os.path import exists
+from os.path import isdir
+from os.path import join
 
-from commoncode.testcase import FileBasedTesting
-from scancode.config import load_conf
+from licensedcode import saneyaml
 
 
-class TestConf(FileBasedTesting):
-    test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
-
-    def test_load_conf(self):
-        assert load_conf(None) == {}
-        assert load_conf('') == {}
-        assert load_conf('/wrong/path/') == {}
-        assert load_conf('/') == {}
-
-        expected = OrderedDict([(u'license_policies', 
-            OrderedDict([(u'broadcom-commercial', 
-                OrderedDict([
-                    (u'color_code', u'#FFcc33'), 
-                    (u'api_url', u'https://enterprise.dejacode.com/api/v2/usage_policies/0ecccbfc-b87e-40c2-b891-0667560a177c/'), 
-                    (u'guidelines', u'These licenses contain obligations...'), 
-                    (u'uuid', u'0ecccbfc-b87e-40c2-b891-0667560a177c'), 
-                    (u'label', u'Restricted License'), 
-                    (u'content_type', u'license'), 
-                    (u'icon', u'icon-warning-sign')]))]))])
-        
-        assert load_conf(self.get_test_loc('conf/scancode.yml')) == expected
+def load_license_policy(location):
+    """
+    Return a license policy loaded from the a license policy config file.
+    """
+    if not location or not exists(location):
+        return {}
+    elif isdir(location):
+        return {}
+    with open(location, 'r') as conf:
+        conf_content = conf.read()
+    return saneyaml.load(conf_content)
