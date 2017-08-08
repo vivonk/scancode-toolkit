@@ -364,7 +364,7 @@ def validate_exclusive(ctx, exclusive_options):
 @click.option('--timeout', is_flag=False, default=DEFAULT_TIMEOUT, type=float, show_default=True, help='Stop scanning a file if scanning takes longer than a timeout in seconds.', group=CORE, cls=ScanOption)
 @click.option('--reindex-licenses', is_flag=True, default=False, is_eager=True, callback=reindex_licenses, help='Force a check and possible reindexing of the cached license index.', group=MISC, cls=ScanOption)
 @click.option('--license-policy', is_flag=False, default=None, type=click.Path(exists=True, readable=True, path_type=str),
-              help='Specifiy license policy file location.')              
+              help='Specify license policy file location.')              
 
 def scancode(ctx,
              input, output_file,

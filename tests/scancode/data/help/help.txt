@@ -44,6 +44,7 @@ Options:
   misc:
     --reindex-licenses  Force a check and possible reindexing of the cached
                         license index.
+    --license-policy PATH  Specify license policy file location.
 
   core:
     -h, --help               Show this message and exit.
@@ -58,7 +59,7 @@ Options:
     --timeout FLOAT          Stop scanning a file if scanning takes longer than a
                              timeout in seconds.  [default: 120]
 
-  Examples (use --examples for more):
+Examples (use --examples for more):
 
   Scan the 'samples' directory for licenses and copyrights.
   Save scan results to a JSON file:
@@ -74,3 +75,4 @@ Options:
   Note: when you run scancode, a progress bar is displayed with a counter of
   the number of files processed. Use --verbose to display file-by-file
   progress.
+
