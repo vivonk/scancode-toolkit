@@ -61,7 +61,7 @@ def parse(location, handler):
     except:
         parser = etree.XMLParser(recover=True, remove_blank_text=True, resolve_entities=False)
         text = analysis.unicode_text(location)
-        xdoc= etree.fromstring(_as_unicode_bytes(text), parser)
+        xdoc = etree.fromstring(_as_unicode_bytes(text), parser)
         return handler(xdoc)
 
 
