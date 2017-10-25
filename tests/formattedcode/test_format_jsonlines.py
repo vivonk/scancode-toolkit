@@ -62,11 +62,11 @@ def check_jsonlines_scan(expected_file, result_file, regen=False):
     convenient for updating tests expectations. But use with caution.
     """
     result = _load_jsonlines_result(result_file)
-    remove_variable_data(result)
 
     if regen:
         with open(expected_file, 'wb') as reg:
-            json.dump(result, reg)
+            json.dump(result, reg, indent=2)
+    remove_variable_data(result)
 
     expected = _load_json_result(expected_file)
     remove_variable_data(expected)

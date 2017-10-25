@@ -5,23 +5,23 @@
     "ns1:SpdxDocument": {
       "ns1:describesPackage": {
         "ns1:Package": {
-          "ns1:name": "simple", 
+          "ns1:hasFile": null, 
+          "ns1:downloadLocation": {
+            "@rdf:resource": "http://spdx.org/rdf/terms#noassertion"
+          }, 
           "ns1:licenseDeclared": {
             "@rdf:resource": "http://spdx.org/rdf/terms#noassertion"
           }, 
-          "ns1:downloadLocation": {
-            "@rdf:resource": "http://spdx.org/rdf/terms#noassertion"
+          "ns1:name": "simple", 
+          "ns1:licenseInfoFromFiles": {
+            "@rdf:resource": "http://spdx.org/rdf/terms#none"
           }, 
           "ns1:licenseConcluded": {
             "@rdf:resource": "http://spdx.org/rdf/terms#noassertion"
           }, 
           "ns1:copyrightText": {
             "@rdf:resource": "http://spdx.org/rdf/terms#none"
-          }, 
-          "ns1:licenseInfoFromFiles": {
-            "@rdf:resource": "http://spdx.org/rdf/terms#none"
-          }, 
-          "ns1:hasFile": null
+          }
         }
       }, 
       "ns1:specVersion": "SPDX-2.1", 
@@ -40,10 +40,10 @@
           "ns1:licenseConcluded": {
             "@rdf:resource": "http://spdx.org/rdf/terms#noassertion"
           }, 
-          "ns1:licenseInfoInFile": {
+          "ns1:copyrightText": {
             "@rdf:resource": "http://spdx.org/rdf/terms#none"
           }, 
-          "ns1:copyrightText": {
+          "ns1:licenseInfoInFile": {
             "@rdf:resource": "http://spdx.org/rdf/terms#none"
           }
         }

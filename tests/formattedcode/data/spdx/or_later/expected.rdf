@@ -3,11 +3,9 @@
     "@xmlns:ns1": "http://spdx.org/rdf/terms#", 
     "@xmlns:rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#", 
     "ns1:SpdxDocument": {
-      "ns1:dataLicense": {
-        "@rdf:resource": "http://spdx.org/licenses/CC0-1.0"
-      }, 
       "ns1:describesPackage": {
         "ns1:Package": {
+          "ns1:hasFile": null, 
           "ns1:downloadLocation": {
             "@rdf:resource": "http://spdx.org/rdf/terms#noassertion"
           }, 
@@ -18,14 +16,16 @@
           "ns1:licenseInfoFromFiles": {
             "@rdf:resource": "http://spdx.org/licenses/LGPL-2.1+"
           }, 
-          "ns1:copyrightText": "Copyright 2010, Red Hat, Inc.", 
           "ns1:licenseConcluded": {
             "@rdf:resource": "http://spdx.org/rdf/terms#noassertion"
           }, 
-          "ns1:hasFile": null
+          "ns1:copyrightText": "Copyright 2010, Red Hat, Inc."
         }
       }, 
       "ns1:specVersion": "SPDX-2.1", 
+      "ns1:dataLicense": {
+        "@rdf:resource": "http://spdx.org/licenses/CC0-1.0"
+      }, 
       "ns1:referencesFile": {
         "ns1:File": {
           "ns1:fileName": "./test.java", 
