@@ -79,12 +79,10 @@ def parse(location):
         package_data = json.load(loc, object_pairs_hook=OrderedDict)
 
     base_dir = fileutils.parent_directory(location)
-    metafile_name = fileutils.file_name(location)
-
-    return build_package(package_data, base_dir, metafile_name)
+    return build_package(package_data, base_dir)
 
 
-def build_package(package_data, base_dir =None, metafile_name='composer.json'):
+def build_package(package_data, base_dir =None):
     """
     Return a composer Package object from a package data mapping or
     None.
@@ -120,9 +118,7 @@ def build_package(package_data, base_dir =None, metafile_name='composer.json'):
     # We want to catch both published and non-published packages here.
 
     package = PHPComposerPackage()
-    # a composer.json is at the root of a PHP composer package
     package.location = base_dir
-    package.metafile_locations = [metafile_name]
 
     for source, target in plain_fields.items():
         value = package_data.get(source)
