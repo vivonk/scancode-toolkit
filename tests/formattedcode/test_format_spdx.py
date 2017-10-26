@@ -28,6 +28,7 @@ from __future__ import division
 from __future__ import unicode_literals
 
 import codecs
+from collections import OrderedDict
 import os
 import re
 
@@ -70,7 +71,7 @@ def load_and_clean_rdf(location):
     """
     content = codecs.open(location, encoding='utf-8').read()
     content = strip_variable_text(content)
-    data = xmltodict.parse(content, dict_constructor=dict)
+    data = xmltodict.parse(content, dict_constructor=OrderedDict)
     return sort_nested(data)
 
 
@@ -78,12 +79,12 @@ def sort_nested(data):
     """
     Return a new dict with any nested list sorted recursively.
     """
-    if isinstance(data, dict):
-        new_data = {}
+    if isinstance(data, (OrderedDict, dict)):
+        new_data = OrderedDict()
         for k, v in data.items():
             if isinstance(v, list):
                 v = sorted(v)
-            if isinstance(v, dict):
+            if isinstance(v, OrderedDict):
                 v = sort_nested(v)
             new_data[k] = v
         return new_data
@@ -92,7 +93,7 @@ def sort_nested(data):
         for v in sorted(data):
             if isinstance(v, list):
                 v = sort_nested(v)
-            if isinstance(v, dict):
+            if isinstance(v, OrderedDict):
                 v = sort_nested(v)
             new_data.append(v)
         return new_data
@@ -111,7 +112,7 @@ def check_rdf_scan(expected_file, result_file, regen=False):
             json.dump(expected, o, indent=2)
     else:
         with codecs.open(expected_file, 'r', encoding='utf-8') as i:
-            expected = sort_nested(json.load(i))
+            expected = sort_nested(json.load(i, object_pairs_hook=OrderedDict))
     assert expected == result
 
 
