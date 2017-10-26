@@ -235,18 +235,12 @@ def as_template(scanned_files, version, template):
     converted_packages = OrderedDict()
     licenses = {}
 
-    LICENSES = 'licenses'
-    COPYRIGHTS = 'copyrights'
-    PACKAGES = 'packages'
-    URLS = 'urls'
-    EMAILS = 'emails'
-
     # Create a flattened data dict keyed by path
     for scanned_file in scanned_files:
         path = scanned_file['path']
         results = []
-        if COPYRIGHTS in scanned_file:
-            for entry in scanned_file[COPYRIGHTS]:
+        if 'copyrights' in scanned_file:
+            for entry in scanned_file['copyrights']:
                 results.append({
                     'start': entry['start_line'],
                     'end': entry['end_line'],
@@ -254,8 +248,8 @@ def as_template(scanned_files, version, template):
                     # NOTE: we display one statement per line.
                     'value': '\n'.join(entry['statements']),
                 })
-        if LICENSES in scanned_file:
-            for entry in scanned_file[LICENSES]:
+        if 'licenses' in scanned_file:
+            for entry in scanned_file['licenses']:
                 results.append({
                     'start': entry['start_line'],
                     'end': entry['end_line'],
@@ -276,12 +270,12 @@ def as_template(scanned_files, version, template):
         # denormalizing the list here??
         converted_infos[path] = OrderedDict()
         for name, value in scanned_file.items():
-            if name in (LICENSES, PACKAGES, COPYRIGHTS, EMAILS, URLS):
+            if name in ('licenses', 'packages', 'copyrights', 'emails', 'urls'):
                 continue
             converted_infos[path][name] = value
 
-        if PACKAGES in scanned_file:
-            converted_packages[path] = scanned_file[PACKAGES]
+        if 'packages' in scanned_file:
+            converted_packages[path] = scanned_file['packages']
 
         licenses = OrderedDict(sorted(licenses.items()))
 
