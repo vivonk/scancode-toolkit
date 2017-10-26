@@ -65,7 +65,7 @@ class TestIsPom(testcase.FileBasedTesting):
             assert maven.is_pom(loc), loc + ' should be a POM'
 
     def test_is_pom_not_misc2(self):
-        test_file = self.get_test_loc('maven_misc/parse/properties-section-single.xml')
+        test_file = self.get_test_loc('maven_misc/properties-section-single.xml')
         assert not maven.is_pom(test_file)
 
     def test_is_pom_m2(self):
@@ -78,7 +78,7 @@ class TestIsPom(testcase.FileBasedTesting):
             assert maven.is_pom(loc), 'file://' + loc + ' should be a POM'
 
     def test_is_pom_not_misc(self):
-        test_file = self.get_test_loc('maven_misc/parse/properties-section.xml')
+        test_file = self.get_test_loc('maven_misc/properties-section.xml')
         assert not maven.is_pom(test_file)
 
 
@@ -204,7 +204,6 @@ class TestMavenMisc(testcase.FileBasedTesting):
             ('distributors', []),
             ('vendors', []),
             ('keywords', []),
-            ('keywords_doc_url', None),
             ('homepage_url', u'https://github.com/spring-projects/spring-framework'),
             ('download_urls', []),
             ('download_sha1', None),
@@ -217,7 +216,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
             ('vcs_repository', None),
             ('vcs_revision', None),
             ('copyright', None),
-            ('asserted_license', 
+            ('asserted_license',
                 u'The Apache Software License, Version 2.0'
                 u'\n'
                 u'http://www.apache.org/licenses/LICENSE-2.0.txt',
@@ -229,9 +228,9 @@ class TestMavenMisc(testcase.FileBasedTesting):
              {u'compile': [
                 OrderedDict([('type', u'Apache Maven POM'), ('name', u'javax.el:javax.el-api'), ('version', u'2.2.5')]),
                 OrderedDict([('type', u'Apache Maven POM'), ('name', u'javax.inject:javax.inject'), ('version', u'1')]),
-                OrderedDict([('type', u'Apache Maven POM'), ('name', u'org.codehaus.groovy:groovy-all'), ('version',u'2.4.5')]),
+                OrderedDict([('type', u'Apache Maven POM'), ('name', u'org.codehaus.groovy:groovy-all'), ('version', u'2.4.5')]),
                 OrderedDict([('type', u'Apache Maven POM'), ('name', u'org.springframework:spring-core'), ('version', u'4.2.2.RELEASE')]),
-                OrderedDict([('type', u'Apache Maven POM'), ('name', u'org.yaml:snakeyaml'), ('version',  u'1.16')]),
+                OrderedDict([('type', u'Apache Maven POM'), ('name', u'org.yaml:snakeyaml'), ('version', u'1.16')]),
             ]}),
             ('related_packages', [])
         ]
@@ -428,34 +427,29 @@ def build_tests(test_dir, clazz, prefix='test_maven2_parse_', check_pom=True, re
         setattr(clazz, test_name, test_method)
 
 
-class TestMavenDataDrivenParsePom(BaseMavenCase):
+class TestMavenDataDrivenPomMisc(BaseMavenCase):
     test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
-build_tests(test_dir='maven_misc/parse', clazz=TestMavenDataDrivenParsePom, prefix='test_maven2_parse_', check_pom=True, regen=False)
+build_tests(test_dir='maven_misc/parse', clazz=TestMavenDataDrivenPomMisc,
+            prefix='test_maven2_parse_misc_', check_pom=True, regen=False)
+build_tests(test_dir='maven_misc/parse', clazz=TestMavenDataDrivenPomMisc,
+            prefix='test_maven2_package_misc_', check_pom=False, regen=False)
 
 
-class TestMavenDataDrivenParsePomBasic(BaseMavenCase):
+class TestMavenDataDrivenPomBasic(BaseMavenCase):
     test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
-build_tests(test_dir='maven2', clazz=TestMavenDataDrivenParsePomBasic, prefix='test_maven2_basic_parse_', check_pom=True, regen=False)
+build_tests(test_dir='maven2', clazz=TestMavenDataDrivenPomBasic,
+            prefix='test_maven2_basic_parse_', check_pom=True, regen=False)
+build_tests(test_dir='maven2', clazz=TestMavenDataDrivenPomBasic,
+            prefix='test_maven2_basic_package_', check_pom=False, regen=False)
 
 
-class TestMavenDataDrivenCreatePackageBasic(BaseMavenCase):
-    test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
-
-build_tests(test_dir='maven2', clazz=TestMavenDataDrivenCreatePackageBasic, prefix='test_maven2_basic_package_', check_pom=False, regen=False)
-
-
-class TestMavenDataDrivenParsePomComprehensive(BaseMavenCase):
-    test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
-
-# note: we use short dir names to deal with Windows long paths limitations
-build_tests(test_dir='m2', clazz=TestMavenDataDrivenParsePomComprehensive, prefix='test_maven2_parse', check_pom=True, regen=False)
-
-
-class TestMavenDataDrivenCreatePackageComprehensive(BaseMavenCase):
+class TestMavenDataDrivenPomComprehensive(BaseMavenCase):
     test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
 # note: we use short dir names to deal with Windows long paths limitations
-build_tests(test_dir='m2', clazz=TestMavenDataDrivenCreatePackageComprehensive, prefix='test_maven2_package', check_pom=False, regen=False)
-
+build_tests(test_dir='m2', clazz=TestMavenDataDrivenPomComprehensive,
+            prefix='test_maven2_parse', check_pom=True, regen=False)
+build_tests(test_dir='m2', clazz=TestMavenDataDrivenPomComprehensive,
+            prefix='test_maven2_package', check_pom=False, regen=False)
