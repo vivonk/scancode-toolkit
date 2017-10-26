@@ -359,7 +359,7 @@ def test_scan_with_errors_and_diag_option_includes_full_traceback():
     assert 'patchelf.pdf' in result.output
 
     result_json = json.loads(open(result_file).read())
-    expected = 'ERROR: copyrights: unpack requires a string argument of length 8'
+    expected = "ERROR: copyrights: 'unpack requires a string argument of length 8'"
     assert expected == result_json['files'][0]['scan_errors'][0]
     assert result_json['files'][0]['scan_errors'][1].startswith('ERROR: copyrights: Traceback (most recent call')
 

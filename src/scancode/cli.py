@@ -887,7 +887,7 @@ def scan_one(location, scanners, diag=False):
         except Exception as e:
             # never fail but instead add an error message and keep an empty scan:
             scan_result[scan_name] = []
-            messages = ['ERROR: ' + scan_name + ': ' + e.message]
+            messages = ['ERROR: ' + scan_name + ': ' + repr(e.message)]
             if diag:
                 messages.append('ERROR: ' + scan_name + ': ' + traceback.format_exc())
             scan_errors.extend(messages)
