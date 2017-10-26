@@ -43,7 +43,7 @@ def remove_dates(scan_result):
             del scanned_file['date']
 
 
-def check_json_scan(expected_file, result_file, regen=False, strip_dates=False):
+def check_json_scan(expected_file, result_file, regen=True, strip_dates=False):
     """
     Check the scan result_file JSON results against the expected_file expected JSON
     results. Removes references to test_dir for the comparison. If regen is True the
