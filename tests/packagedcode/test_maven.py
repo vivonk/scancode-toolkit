@@ -181,6 +181,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
             ('name', u'org.springframework:spring-beans'),
             ('version', u'4.2.2.RELEASE'),
             ('primary_language', u'Java'),
+            ('code_type', None),
             ('description', u'Spring Beans'),
             ('size', None),
             ('release_date', None),
