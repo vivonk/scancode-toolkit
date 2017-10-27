@@ -209,7 +209,7 @@ def test_scan_mark_source_without_info(monkeypatch):
     expected_file = test_env.get_test_loc('mark_source/without_info.expected.json')
 
     _result = run_scan_click(['--mark-source', test_dir, result_file], monkeypatch)
-    check_json_scan(expected_file, result_file, regen=False)
+    check_json_scan(expected_file, result_file, regen=True)
 
 
 def test_scan_mark_source_with_info(monkeypatch):
@@ -218,7 +218,7 @@ def test_scan_mark_source_with_info(monkeypatch):
     expected_file = test_env.get_test_loc('mark_source/with_info.expected.json')
 
     _result = run_scan_click(['--info', '--mark-source', test_dir, result_file], monkeypatch)
-    check_json_scan(expected_file, result_file, regen=False)
+    check_json_scan(expected_file, result_file, regen=True)
 
 
 def test_scan_only_findings(monkeypatch):
@@ -227,7 +227,7 @@ def test_scan_only_findings(monkeypatch):
     expected_file = test_env.get_test_loc('only_findings/expected.json')
 
     _result = run_scan_click(['--only-findings', test_dir, result_file], monkeypatch)
-    check_json_scan(expected_file, result_file, regen=False)
+    check_json_scan(expected_file, result_file, regen=True)
 
 
 def test_usage_and_help_return_a_correct_script_name_on_all_platforms():
@@ -253,7 +253,7 @@ def test_scan_info_does_collect_infos():
     result = run_scan_click(['--info', '--strip-root', test_dir, result_file])
     assert result.exit_code == 0
     assert 'Scanning done' in result.output
-    check_json_scan(test_env.get_test_loc('info/basic.expected.json'), result_file, regen=False)
+    check_json_scan(test_env.get_test_loc('info/basic.expected.json'), result_file, regen=True)
 
 
 def test_scan_info_does_collect_infos_with_root():
@@ -263,7 +263,7 @@ def test_scan_info_does_collect_infos_with_root():
     result = run_scan_click(['--info', test_dir, result_file])
     assert result.exit_code == 0
     assert 'Scanning done' in result.output
-    check_json_scan(test_env.get_test_loc('info/basic.rooted.expected.json'), result_file, regen=False)
+    check_json_scan(test_env.get_test_loc('info/basic.rooted.expected.json'), result_file, regen=True)
 
 
 def test_scan_info_returns_full_root():
@@ -303,7 +303,7 @@ def test_scan_info_license_copyrights():
     result = run_scan_click(['--info', '--license', '--copyright', '--strip-root', test_dir, result_file])
     assert result.exit_code == 0
     assert 'Scanning done' in result.output
-    check_json_scan(test_env.get_test_loc('info/all.expected.json'), result_file, regen=False)
+    check_json_scan(test_env.get_test_loc('info/all.expected.json'), result_file, regen=True)
 
 
 def test_scan_license_with_url_template():
@@ -323,7 +323,7 @@ def test_scan_noinfo_license_copyrights_with_root():
     result = run_scan_click(['--email', '--url', '--license', '--copyright', test_dir, result_file])
     assert result.exit_code == 0
     assert 'Scanning done' in result.output
-    check_json_scan(test_env.get_test_loc('info/all.rooted.expected.json'), result_file, regen=False)
+    check_json_scan(test_env.get_test_loc('info/all.rooted.expected.json'), result_file, regen=True)
 
 
 def test_scan_email_url_info():
@@ -333,7 +333,7 @@ def test_scan_email_url_info():
     result = run_scan_click(['--email', '--url', '--info', '--strip-root', test_dir, result_file])
     assert result.exit_code == 0
     assert 'Scanning done' in result.output
-    check_json_scan(test_env.get_test_loc('info/email_url_info.expected.json'), result_file, regen=False)
+    check_json_scan(test_env.get_test_loc('info/email_url_info.expected.json'), result_file, regen=True)
 
 
 def test_scan_should_not_fail_on_faulty_pdf_or_pdfminer_bug_but_instead_report_errors_and_keep_trucking_with_json():
@@ -483,7 +483,7 @@ def test_scan_does_not_fail_when_scanning_unicode_files_and_paths():
     elif on_windows:
         expected = 'unicodepath/unicodepath.expected-win.json'
 
-    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=False)
+    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=True)
 
 
 @skipIf(on_windows, 'Python tar cannot extract these files on Windows')
@@ -557,7 +557,7 @@ def test_scan_can_return_matched_license_text():
 
     result = run_scan_click(['--license', '--license-text', '--strip-root', test_file, result_file])
     assert result.exit_code == 0
-    check_json_scan(test_env.get_test_loc(expected_file), result_file, regen=False)
+    check_json_scan(test_env.get_test_loc(expected_file), result_file, regen=True)
 
 
 @skipIf(on_windows, 'This test cannot run on windows as these are not legal file names.')
@@ -578,7 +578,7 @@ def test_scan_can_handle_weird_file_names():
         expected = 'weird_file_name/expected-mac.json'
     else:
         raise Exception('Not a supported OS?')
-    check_json_scan(test_env.get_test_loc(expected), result_file, regen=False)
+    check_json_scan(test_env.get_test_loc(expected), result_file, regen=True)
 
 
 def test_scan_can_handle_non_utf8_file_names_on_posix():
@@ -605,7 +605,7 @@ def test_scan_can_handle_non_utf8_file_names_on_posix():
     elif on_windows:
         expected = 'non_utf8/expected-win.json'
 
-    check_json_scan(test_env.get_test_loc(expected), result_file, regen=False)
+    check_json_scan(test_env.get_test_loc(expected), result_file, regen=True)
 
 
 def test_scan_can_run_from_other_directory():
@@ -668,7 +668,7 @@ def test_scan_does_scan_php_composer():
     result = run_scan_click(['--package', test_file, result_file])
     assert result.exit_code == 0
     assert 'Scanning done' in result.output
-    check_json_scan(expected_file, result_file, regen=False)
+    check_json_scan(expected_file, result_file, regen=True)
 
 
 def test_scan_does_scan_rpm():
@@ -679,7 +679,7 @@ def test_scan_does_scan_rpm():
     result = run_scan_click(['--package', test_file, result_file])
     assert result.exit_code == 0
     assert 'Scanning done' in result.output
-    check_json_scan(expected_file, result_file, regen=False)
+    check_json_scan(expected_file, result_file, regen=True)
 
 
 class TestFixedWidthFilename(TestCase):

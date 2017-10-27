@@ -47,7 +47,7 @@ def test_json_pretty_print():
     assert 'Scanning done' in result.output
 
     expected = test_env.get_test_loc('json/simple-expected.jsonpp')
-    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=False)
+    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=True)
 
 
 def test_json_compact():
@@ -62,7 +62,7 @@ def test_json_compact():
         assert len(res.read().splitlines())==1
 
     expected = test_env.get_test_loc('json/simple-expected.json')
-    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=False)
+    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=True)
 
 
 def test_scan_output_does_not_truncate_copyright_json():
@@ -75,7 +75,7 @@ def test_scan_output_does_not_truncate_copyright_json():
     assert 'Scanning done' in result.output
 
     expected = test_env.get_test_loc('json/tree/expected.json')
-    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=False)
+    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=True)
 
 
 def test_scan_output_does_not_truncate_copyright_with_json_to_stdout():
@@ -88,4 +88,4 @@ def test_scan_output_does_not_truncate_copyright_with_json_to_stdout():
     assert 'Scanning done' in result.output
 
     expected = test_env.get_test_loc('json/tree/expected.json')
-    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=False)
+    check_json_scan(test_env.get_test_loc(expected), result_file, strip_dates=True, regen=True)
