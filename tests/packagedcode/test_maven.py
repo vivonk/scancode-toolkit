@@ -181,9 +181,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
             ('name', u'org.springframework:spring-beans'),
             ('version', u'4.2.2.RELEASE'),
             ('primary_language', u'Java'),
-            ('packaging', u'archive'),
             ('description', u'Spring Beans'),
-            ('payload_type', None),
             ('size', None),
             ('release_date', None),
             ('parties', [
@@ -329,7 +327,7 @@ class TestPomProperties(testcase.FileBasedTesting):
 class BaseMavenCase(testcase.FileBasedTesting):
     test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
-    def check_parse_pom(self, test_pom, regen=True):
+    def check_parse_pom(self, test_pom, regen=False):
         """
         Test the parsing of POM at test_pom against an expected JSON
         from the same name with a .json extension.
@@ -347,7 +345,7 @@ class BaseMavenCase(testcase.FileBasedTesting):
 
         assert expected.items() == parsed_pom.items()
 
-    def check_parse_to_package(self, test_pom, regen=True):
+    def check_parse_to_package(self, test_pom, regen=False):
         """
         Test the creation of a Package from a POM at test_pom against an
         expected JSON from the same name with a .package.json extension.
@@ -384,7 +382,7 @@ def relative_walk(dir_path):
             yield file_path
 
 
-def create_test_function(test_pom_loc, test_name, check_pom=True, regen=True):
+def create_test_function(test_pom_loc, test_name, check_pom=True, regen=False):
     """
     Return a test function closed on test arguments.
     If check_parse_pom is True, test the POM parsing; otherwise, test Package creation
@@ -405,7 +403,7 @@ def create_test_function(test_pom_loc, test_name, check_pom=True, regen=True):
     return test_pom
 
 
-def build_tests(test_dir, clazz, prefix='test_maven2_parse_', check_pom=True, regen=True):
+def build_tests(test_dir, clazz, prefix='test_maven2_parse_', check_pom=True, regen=False):
     """
     Dynamically build test methods for each POMs in `test_dir`  and
     attach the test method to the `clazz` class.
@@ -426,18 +424,18 @@ class TestMavenDataDrivenPomMisc(BaseMavenCase):
     test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
 build_tests(test_dir='maven_misc/parse', clazz=TestMavenDataDrivenPomMisc,
-            prefix='test_maven2_parse_misc_', check_pom=True, regen=True)
+            prefix='test_maven2_parse_misc_', check_pom=True, regen=False)
 build_tests(test_dir='maven_misc/parse', clazz=TestMavenDataDrivenPomMisc,
-            prefix='test_maven2_package_misc_', check_pom=False, regen=True)
+            prefix='test_maven2_package_misc_', check_pom=False, regen=False)
 
 
 class TestMavenDataDrivenPomBasic(BaseMavenCase):
     test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
 build_tests(test_dir='maven2', clazz=TestMavenDataDrivenPomBasic,
-            prefix='test_maven2_basic_parse_', check_pom=True, regen=True)
+            prefix='test_maven2_basic_parse_', check_pom=True, regen=False)
 build_tests(test_dir='maven2', clazz=TestMavenDataDrivenPomBasic,
-            prefix='test_maven2_basic_package_', check_pom=False, regen=True)
+            prefix='test_maven2_basic_package_', check_pom=False, regen=False)
 
 
 class TestMavenDataDrivenPomComprehensive(BaseMavenCase):
@@ -445,6 +443,6 @@ class TestMavenDataDrivenPomComprehensive(BaseMavenCase):
 
 # note: we use short dir names to deal with Windows long paths limitations
 build_tests(test_dir='m2', clazz=TestMavenDataDrivenPomComprehensive,
-            prefix='test_maven2_parse', check_pom=True, regen=True)
+            prefix='test_maven2_parse', check_pom=True, regen=False)
 build_tests(test_dir='m2', clazz=TestMavenDataDrivenPomComprehensive,
-            prefix='test_maven2_package', check_pom=False, regen=True)
+            prefix='test_maven2_package', check_pom=False, regen=False)

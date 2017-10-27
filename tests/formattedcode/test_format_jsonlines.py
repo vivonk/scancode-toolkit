@@ -54,7 +54,7 @@ def remove_variable_data(scan_result):
                 del scanned_file['date']
 
 
-def check_jsonlines_scan(expected_file, result_file, regen=True):
+def check_jsonlines_scan(expected_file, result_file, regen=False):
     """
     Check the scan result_file JSON Lines results against the expected_file
     expected JSON results, which is a list of mappings, one per line. If regen
@@ -99,4 +99,4 @@ def test_jsonlines():
     assert 'Scanning done' in result.output
 
     expected = test_env.get_test_loc('json/simple-expected.jsonlines')
-    check_jsonlines_scan(test_env.get_test_loc(expected), result_file, regen=True)
+    check_jsonlines_scan(test_env.get_test_loc(expected), result_file, regen=False)
