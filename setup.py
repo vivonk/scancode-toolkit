@@ -224,6 +224,7 @@ setup(
         'scancode_post_scan': [
             'only-findings = scancode.plugin_only_findings:process_only_findings',
             'mark-source = scancode.plugin_mark_source:process_mark_source',
+            'espedexify = scancode.plugin_espedexify:replace_boilerplate_with_spdx_ids',
         ],
 
         # scancode_pre_scan is an entry point to define pre_scan plugins.
