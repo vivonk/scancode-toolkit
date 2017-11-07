@@ -96,7 +96,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
             (u'artifact_id', None),
             (u'version', None),
             (u'classifier', None),
-            (u'packaging ', 'jar'),
+            (u'packaging', 'jar'),
             (u'parent', {}),
             (u'name', 'Maven Abbot plugin'),
             (u'description', None),
@@ -117,7 +117,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
             (u'plugin_repositories', []),
             (u'dependencies', {})
         ])
-        assert expected == results
+        assert expected.items() == results.items()
 
     def test_pom_dependencies(self):
         test_loc = self.get_test_loc('maven2/activemq-camel-pom.xml')
@@ -177,56 +177,93 @@ class TestMavenMisc(testcase.FileBasedTesting):
 
         assert isinstance(package, maven.MavenPomPackage)
         expected = [
-            ('type', u'Apache Maven POM'),
-            ('name', u'org.springframework:spring-beans'),
-            ('version', u'4.2.2.RELEASE'),
-            ('primary_language', u'Java'),
-            ('code_type', None),
-            ('description', u'Spring Beans'),
-            ('size', None),
-            ('release_date', None),
-            ('parties', [
+            (b'type', u'maven'),
+            (b'namespace', u'org.springframework'),
+            (b'name', u'spring-beans'),
+            (b'version', u'4.2.2.RELEASE'),
+            (b'qualifiers', None),
+            (b'path', None),
+            (b'primary_language', u'Java'),
+            (b'code_type', None),
+            (b'description', u'Spring Beans'),
+            (b'size', None),
+            (b'release_date', None),
+            (b'parties', [
                 OrderedDict([
-                    ('type', u'person'),
-                    ('role', 'developper'),
-                    ('name', u'Juergen Hoeller'),
-                    ('email', u'jhoeller@pivotal.io'),
-                    ('url', None)
+                    (b'type', u'person'),
+                    (b'role', 'developper'),
+                    (b'name', u'Juergen Hoeller'),
+                    (b'email', u'jhoeller@pivotal.io'),
+                    (b'url', None)
                 ]),
                 OrderedDict([
-                    ('type', u'organization'),
-                    ('role', 'owner'),
-                    ('name', u'Spring IO'),
-                    ('email', None),
-                    ('url', u'http://projects.spring.io/spring-framework')
+                    (b'type', u'organization'),
+                    (b'role', 'owner'),
+                    (b'name', u'Spring IO'),
+                    (b'email', None),
+                    (b'url', u'http://projects.spring.io/spring-framework')
                 ])
             ]),
-            ('keywords', []),
-            ('homepage_url', u'https://github.com/spring-projects/spring-framework'),
-            ('download_url', None),
-            ('download_checksums', []),
-            ('bug_tracking_url', None),
-            ('code_view_url', None),
-            ('vcs_tool', None),
-            ('vcs_repository', None),
-            ('vcs_revision', None),
-            ('copyright', None),
-            ('asserted_license',
+            (b'keywords', []),
+            (b'homepage_url', u'https://github.com/spring-projects/spring-framework'),
+            (b'download_url', None),
+            (b'download_checksums', []),
+            (b'bug_tracking_url', None),
+            (b'code_view_url', None),
+            (b'vcs_tool', None),
+            (b'vcs_repository', None),
+            (b'vcs_revision', None),
+            (b'copyright', None),
+            (b'license_expression', None),
+            (b'asserted_license',
                 u'The Apache Software License, Version 2.0'
                 u'\n'
                 u'http://www.apache.org/licenses/LICENSE-2.0.txt',
             ),
-            ('license_expression', None),
-            ('notice_text', None),
-            ('dependencies',
-             {u'compile': [
-                OrderedDict([('type', u'Apache Maven POM'), ('name', u'javax.el:javax.el-api'), ('version', u'2.2.5')]),
-                OrderedDict([('type', u'Apache Maven POM'), ('name', u'javax.inject:javax.inject'), ('version', u'1')]),
-                OrderedDict([('type', u'Apache Maven POM'), ('name', u'org.codehaus.groovy:groovy-all'), ('version', u'2.4.5')]),
-                OrderedDict([('type', u'Apache Maven POM'), ('name', u'org.springframework:spring-core'), ('version', u'4.2.2.RELEASE')]),
-                OrderedDict([('type', u'Apache Maven POM'), ('name', u'org.yaml:snakeyaml'), ('version', u'1.16')]),
-            ]}),
-            ('related_packages', [])
+            (b'notice_text', None),
+            (b'dependencies', [
+                OrderedDict([
+                    (b'identifier', u'maven:javax.el/javax.el-api'),
+                    (b'requirement', '2.2.5'),
+                    (b'scope', 'compile'),
+                    (b'is_runtime', True),
+                    (b'is_optional', True),
+                    (b'is_resolved', False),
+                ]),
+                OrderedDict([
+                    (b'identifier', u'maven:javax.inject/javax.inject'),
+                    (b'requirement', '1'),
+                    (b'scope', 'compile'),
+                    (b'is_runtime', True),
+                    (b'is_optional', True),
+                    (b'is_resolved', False),
+                ]),
+                OrderedDict([
+                    (b'identifier', u'maven:org.codehaus.groovy/groovy-all'),
+                    (b'requirement', '2.4.5'),
+                    (b'scope', 'compile'),
+                    (b'is_runtime', True),
+                    (b'is_optional', True),
+                    (b'is_resolved', False),
+                ]),
+                OrderedDict([
+                    (b'identifier', u'maven:org.springframework/spring-core'),
+                    (b'requirement', '4.2.2.RELEASE'),
+                    (b'scope', 'compile'),
+                    (b'is_runtime', True),
+                    (b'is_optional', False),
+                    (b'is_resolved', False),
+                ]),
+                OrderedDict([
+                    (b'identifier', u'maven:org.yaml/snakeyaml'),
+                    (b'requirement', '1.16'),
+                    (b'scope', 'compile'),
+                    (b'is_runtime', True),
+                    (b'is_optional', True),
+                    (b'is_resolved', False),
+                ]),
+            ]),
+            (b'related_packages', [])
         ]
         assert expected == package.to_dict().items()
         package.validate()
