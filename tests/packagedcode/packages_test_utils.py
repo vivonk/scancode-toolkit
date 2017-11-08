@@ -50,7 +50,6 @@ class PackageTester(testcase.FileBasedTesting):
                 package_dict[key] = values
         return package_dict
 
-
     def check_package(self, package, expected_loc, regen=False, fix_locations=True):
         """
         Helper to test a package object against an expected JSON file.
