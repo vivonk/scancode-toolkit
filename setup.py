@@ -31,6 +31,7 @@ except ValueError:
     pass
 ####
 
+
 def get_version(default=version, template='{tag}.{distance}.{commit}{dirty}',
                 use_default=USE_DEFAULT_VERSION):
     """
@@ -162,6 +163,7 @@ setup(
 
         # packagedcode
         'attrs >=16.0, < 17.0',
+        'pefile == 1.2.10-132',
         'pymaven-patch >= 0.2.4',
         'requests >= 2.7.0, < 3.0.0',
         'schematics_patched',
