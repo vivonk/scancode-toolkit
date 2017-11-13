@@ -182,7 +182,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
             (b'name', u'spring-beans'),
             (b'version', u'4.2.2.RELEASE'),
             (b'qualifiers', None),
-            (b'path', None),
+            (b'subpath', None),
             (b'primary_language', u'Java'),
             (b'code_type', None),
             (b'description', u'Spring Beans'),
@@ -223,7 +223,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
             (b'notice_text', None),
             (b'dependencies', [
                 OrderedDict([
-                    (b'identifier', u'maven:javax.el/javax.el-api'),
+                    (b'purl', u'maven:javax.el/javax.el-api'),
                     (b'requirement', '2.2.5'),
                     (b'scope', 'compile'),
                     (b'is_runtime', True),
@@ -231,7 +231,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
                     (b'is_resolved', False),
                 ]),
                 OrderedDict([
-                    (b'identifier', u'maven:javax.inject/javax.inject'),
+                    (b'purl', u'maven:javax.inject/javax.inject'),
                     (b'requirement', '1'),
                     (b'scope', 'compile'),
                     (b'is_runtime', True),
@@ -239,7 +239,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
                     (b'is_resolved', False),
                 ]),
                 OrderedDict([
-                    (b'identifier', u'maven:org.codehaus.groovy/groovy-all'),
+                    (b'purl', u'maven:org.codehaus.groovy/groovy-all'),
                     (b'requirement', '2.4.5'),
                     (b'scope', 'compile'),
                     (b'is_runtime', True),
@@ -247,7 +247,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
                     (b'is_resolved', False),
                 ]),
                 OrderedDict([
-                    (b'identifier', u'maven:org.springframework/spring-core'),
+                    (b'purl', u'maven:org.springframework/spring-core'),
                     (b'requirement', '4.2.2.RELEASE'),
                     (b'scope', 'compile'),
                     (b'is_runtime', True),
@@ -255,7 +255,7 @@ class TestMavenMisc(testcase.FileBasedTesting):
                     (b'is_resolved', False),
                 ]),
                 OrderedDict([
-                    (b'identifier', u'maven:org.yaml/snakeyaml'),
+                    (b'purl', u'maven:org.yaml/snakeyaml'),
                     (b'requirement', '1.16'),
                     (b'scope', 'compile'),
                     (b'is_runtime', True),
