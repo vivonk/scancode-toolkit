@@ -55,21 +55,36 @@ def process_merkle_tree(active_scans, results):
         scanned_file_path = scanned_file.get('path')
 
         if scanned_file['type'] == 'directory':
-            # If a directory only has directories in it
+            """
+            Because we process the files of a directory before the directory
+            itself, we come into the situation where a directory is only composed
+            of directories does not have it's path in `dir_hash_store`.
+            Normally, a directory is added to `dir_hash_store` when a file within
+            it is processed and it's hash is added to the hash of the directory.
+            Because we do not have any files in a directory that only has directories,
+            the directory's path is not in `dir_hash_store`. In this case,
+            we would need to iterate through `dir_hash_store` and add the hashes
+            of the directories of the directory we are in to the directory's hash.
+            """
             if scanned_file_path not in dir_hash_store:
                 dir_hash = sha1()
                 for k, v in dir_hash_store.iteritems():
+                    # We determine directories that are within the directory
+                    # we are in by checking of the path of a directory has the same
+                    # prefix as the path of the directory we are in
                     if k.startswith(scanned_file_path):
                         dir_hash.update(v.hexdigest())
                 dir_hash_store[scanned_file_path] = dir_hash
-            # If there were files in a directory, we need to collect the
-            # hashes of the directories in the directory
             else:
+                # If there were files in a directory, we need to add the
+                # hashes of the directories in the directory to the exisiting
+                # hash
                 for k, v in dir_hash_store.iteritems():
                     if k.startswith(scanned_file_path):
                         dir_hash_store[scanned_file_path].update(v.hexdigest())
             scanned_file.update({'sha1': dir_hash_store[scanned_file_path].hexdigest()})
         else:
+            # We add or update the directory hash of a current file
             dirpath = dirname(scanned_file_path)
             scanned_file_sha1 = scanned_file.get('sha1')
 
