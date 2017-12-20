@@ -29,13 +29,16 @@ import json
 import os
 
 from commoncode.testcase import FileBasedTesting
+from scancode.api import _empty_file_infos
+from scancode.plugin_merkle_tree import Dir
+from scancode.plugin_merkle_tree import File
 from scancode.plugin_merkle_tree import build_tree
 
 
 class TestMerkleTree(FileBasedTesting):
     test_data_dir = os.path.join(os.path.dirname(__file__), 'data')
 
-    def test_merkle_tree_build_tree(self):
+    def test_merkle_tree_postorder_walk(self):
         test_file = self.get_test_loc('merkle_tree/sample.json')
         scan_results = json.loads(open(test_file).read())['files']
         root = build_tree(scan_results)
@@ -55,3 +58,138 @@ class TestMerkleTree(FileBasedTesting):
         results = list(('{}'.format(current_dir), '{}'.format(dirs), '{}'.format(files)) for current_dir, dirs, files in root.postorder_walk())
 
         assert expected_results == results
+
+    def test_merkle_tree_build_tree(self):
+        test_file = self.get_test_loc('merkle_tree/build_tree.json')
+        scan_results = json.loads(open(test_file).read())['files']
+        results = build_tree(scan_results)
+
+        dir_1 = {
+            'path': 'JGroups/licenses',
+            'type': 'directory',
+            'name': 'licenses',
+            'base_name': 'licenses',
+            'extension': '',
+            'date': None,
+            'size': 54552,
+            'sha1': None,
+            'md5': None,
+            'files_count': 5,
+            'mime_type': None,
+            'file_type': None,
+            'programming_language': None,
+            'is_binary': False,
+            'is_text': False,
+            'is_archive': False,
+            'is_media': False,
+            'is_source': False,
+            'is_script': False,
+            'scan_errors': []
+        }
+
+        dir_2 = {
+            'path': 'JGroups/src',
+            'type': 'directory',
+            'name': 'src',
+            'base_name': 'src',
+            'extension': '',
+            'date': None,
+            'size': 152090,
+            'sha1': None,
+            'md5': None,
+            'files_count': 7,
+            'mime_type': None,
+            'file_type': None,
+            'programming_language': None,
+            'is_binary': False,
+            'is_text': False,
+            'is_archive': False,
+            'is_media': False,
+            'is_source': False,
+            'is_script': False,
+            'scan_errors': []
+        }
+
+        file_1 = {
+            'path': 'JGroups/LICENSE',
+            'type': 'file',
+            'name': 'LICENSE',
+            'base_name': 'LICENSE',
+            'extension': '',
+            'date': '2017-07-11',
+            'size': 26430,
+            'sha1': 'e60c2e780886f95df9c9ee36992b8edabec00bcc',
+            'md5': '7fbc338309ac38fefcd64b04bb903e34',
+            'files_count': None,
+            'mime_type': 'text/plain',
+            'file_type': 'ASCII text',
+            'programming_language': None,
+            'is_binary': False,
+            'is_text': True,
+            'is_archive': False,
+            'is_media': False,
+            'is_source': False,
+            'is_script': False,
+            'scan_errors': []
+        }
+
+        file_2 = {
+            'path': 'JGroups/licenses/apache-2.0.txt',
+            'type': 'file',
+            'name': 'apache-2.0.txt',
+            'base_name': 'apache-2.0',
+            'extension': '.txt',
+            'date': '2017-07-11',
+            'size': 11560,
+            'sha1': '47b573e3824cd5e02a1a3ae99e2735b49e0256e4',
+            'md5': 'd273d63619c9aeaf15cdaf76422c4f87',
+            'files_count': None,
+            'mime_type': 'text/plain',
+            'file_type': 'ASCII text, with CRLF line terminators',
+            'programming_language': None,
+            'is_binary': False,
+            'is_text': True,
+            'is_archive': False,
+            'is_media': False,
+            'is_source': False,
+            'is_script': False,
+            'scan_errors': []
+        }
+
+        file_3 = {
+            'path': 'JGroups/src/ImmutableReference.java',
+            'type': 'file',
+            'name': 'ImmutableReference.java',
+            'base_name': 'ImmutableReference',
+            'extension': '.java',
+            'date': '2017-07-11',
+            'size': 1838,
+            'sha1': '30f56b876d5576d9869e2c5c509b08db57110592',
+            'md5': '48ca3c72fb9a65c771a321222f118b88',
+            'files_count': None,
+            'mime_type': 'text/plain',
+            'file_type': 'ASCII text',
+            'programming_language': 'Java',
+            'is_binary': False,
+            'is_text': True,
+            'is_archive': False,
+            'is_media': False,
+            'is_source': True,
+            'is_script': False,
+            'scan_errors': []
+        }
+
+        expected_root_data = _empty_file_infos()
+        expected_root_data['path'] = 'JGroups'
+        expected_root_data['basename'] = 'JGroups'
+        expected_root_data['name'] = 'JGroups'
+        expected_root_data['type'] = 'directory'
+
+        expected_results = Dir(expected_root_data)
+        expected_results.dirs.append(Dir(dir_1))
+        expected_results.dirs.append(Dir(dir_2))
+        expected_results.files.append(File(file_1))
+        expected_results.dirs[0].files.append(File(file_2))
+        expected_results.dirs[1].files.append(File(file_3))
+
+        assert results == expected_results
