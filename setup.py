@@ -224,7 +224,7 @@ setup(
         'scancode_post_scan': [
             'only-findings = scancode.plugin_only_findings:process_only_findings',
             'mark-source = scancode.plugin_mark_source:process_mark_source',
-            'merkle-tree = scancode.plugin_merkle_tree:process_merkle_tree'
+            'merkle-tree = scancode.plugin_merkle_tree:build_merkle_tree'
         ],
 
         # scancode_pre_scan is an entry point to define pre_scan plugins.

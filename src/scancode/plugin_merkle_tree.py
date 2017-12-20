@@ -26,14 +26,140 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
 
-from os.path import dirname
-
+from commoncode.fileutils import file_base_name
+from commoncode.fileutils import file_name
+from commoncode.fileutils import parent_directory
 from hashlib import sha1
 from plugincode.post_scan import post_scan_impl
+from scancode.api import _empty_file_infos
+
+
+class File(object):
+    def __init__(self, data):
+        self.data = data
+
+    def __repr__(self):
+        string_repr = '{}(\'{}\')'.format(type(self).__name__, self.data['path'])
+        return repr(string_repr)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.data['path'] == other.data['path']
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+
+class Dir(object):
+    def __init__(self, data):
+        self.data = data
+        self.dirs = []
+        self.files = []
+
+    def __repr__(self):
+        string_repr = '{}(\'{}\')'.format(type(self).__name__, self.data['path'])
+        return repr(string_repr)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.data['path'] == other.data['path']
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def postorder_walk(self):
+        for d in self.dirs:
+            for subdir in d.postorder_walk():
+                yield subdir
+        yield self, self.dirs, self.files
+
+    def as_tree(self, prefix=''):
+        for f in self.files:
+            print(prefix, f.data['name'])
+        for d in self.dirs:
+            print(prefix, d.data['name'])
+            d.as_tree(prefix + '  ')
+
+
+def build_tree(results):
+    """
+    Return a Dir tree object computed from a list of results
+    """
+    results = list(results)
+
+    sample_file = results[0]
+    sample_file_path = sample_file['path']
+    root_path = sample_file_path.split('/')[0]
+
+    root_data = _empty_file_infos()
+    root_data['path'] = root_path
+    root_data['basename'] = root_path
+    root_data['name'] = root_path
+    root_data['type'] = 'directory'
+
+    root = Dir(root_data)
+    dirs = {root_path: root}
+
+    for scanned_file in results:
+        path = scanned_file['path']
+        isdir = scanned_file['type'] == 'directory'
+
+        parent_path = parent_directory(path).strip('/')
+        parent = dirs.get(parent_path)
+
+        if not parent:
+            parent_data = _empty_file_infos()
+            parent_data['path'] = parent_path
+            parent_data['basename'] = file_base_name(parent_path)
+            parent_data['name'] = file_name(parent_path)
+            parent_data['type'] = 'directory'
+            parent = Dir(parent_data)
+            dirs[parent_path] = parent
+
+            # FIXME: we need to check to see if the parent of the new parent directory
+            # we created exists and to attach them together until we reach the root
+            #
+            # There probably is a better way to do this
+            current = parent
+            while current != root:
+                curr_path = current.data.get('path')
+                curr_parent_path = parent_directory(curr_path).strip('/')
+                curr_parent = dirs.get(curr_parent_path)
+                if curr_parent:
+                    for dir in curr_parent.dirs:
+                        if dir.data['path'] == current.data['path']:
+                            dir.dirs = current.dirs
+                            dir.files = current.files
+                            break
+                    else:
+                        curr_parent.dirs.append(current)
+                else:
+                    parent_data = _empty_file_infos()
+                    parent_data['path'] = curr_parent_path
+                    parent_data['basename'] = file_base_name(curr_parent_path)
+                    parent_data['name'] = file_name(curr_parent_path)
+                    parent_data['type'] = 'directory'
+                    parent = Dir(parent_data)
+                    dirs[curr_parent_path] = parent
+                    curr_parent = parent
+                current = curr_parent
+
+        if isdir:
+            d = Dir(scanned_file)
+            parent.dirs.append(d)
+        else:
+            f = File(scanned_file)
+            parent.files.append(f)
+
+    return root
 
 
 @post_scan_impl
-def process_merkle_tree(active_scans, results):
+def build_merkle_tree(active_scans, results):
     """
     Calculate hash of hashes in directories
     """
@@ -42,55 +168,33 @@ def process_merkle_tree(active_scans, results):
     # and defeats lazy loading from cache
     results = list(results)
 
-    # We prep our data to be more condusive to bottom-up sorting with the files
-    # of directories ordered before the directories
-    bottom_up_results = []
-    for scanned_file in results:
-        bottom_up_results.append((-len(scanned_file['path'].split('/')), scanned_file['type'] == 'directory', scanned_file['path'].split('/'), scanned_file))
-    bottom_up_results = sorted(bottom_up_results)
+    root = build_tree(results)
+    hash_stack = []
 
-    dir_hash_store = {}
-    for result_tuple in bottom_up_results:
-        scanned_file = result_tuple[-1]
-        scanned_file_path = scanned_file.get('path')
+    for present_dir, dirs, files in root.postorder_walk():
+        dir_hash = sha1()
 
-        if scanned_file['type'] == 'directory':
-            """
-            Because we process the files of a directory before the directory
-            itself, we come into the situation where a directory is only composed
-            of directories does not have it's path in `dir_hash_store`.
-            Normally, a directory is added to `dir_hash_store` when a file within
-            it is processed and it's hash is added to the hash of the directory.
-            Because we do not have any files in a directory that only has directories,
-            the directory's path is not in `dir_hash_store`. In this case,
-            we would need to iterate through `dir_hash_store` and add the hashes
-            of the directories of the directory we are in to the directory's hash.
-            """
-            if scanned_file_path not in dir_hash_store:
-                dir_hash = sha1()
-                for k, v in dir_hash_store.iteritems():
-                    # We determine directories that are within the directory
-                    # we are in by checking of the path of a directory has the same
-                    # prefix as the path of the directory we are in
-                    if k.startswith(scanned_file_path):
-                        dir_hash.update(v.hexdigest())
-                dir_hash_store[scanned_file_path] = dir_hash
-            else:
-                # If there were files in a directory, we need to add the
-                # hashes of the directories in the directory to the exisiting
-                # hash
-                for k, v in dir_hash_store.iteritems():
-                    if k.startswith(scanned_file_path):
-                        dir_hash_store[scanned_file_path].update(v.hexdigest())
-            scanned_file.update({'sha1': dir_hash_store[scanned_file_path].hexdigest()})
+        # We add the SHA1 of the files of a directory to the directory hash
+        for file in files:
+            dir_hash.update(file.data['sha1'])
+            yield file.data
+
+        if dirs:
+            # If the directory we are in has directories, we iterate through the
+            # `hash_stack` list of all the hashes of the directories we previously
+            # processed and add their hex digest values to the current directory hash
+            #
+            # By walking the tree in a postorder fashion, we visit and process
+            # the files and directories within a directory before the directory itself
+            for hash in hash_stack:
+                dir_hash.update(hash.hexdigest())
+            # We no longer need to keep the hashes around because we processed
+            # all of them for this directory
+            hash_stack = []
         else:
-            # We add or update the directory hash of a current file
-            dirpath = dirname(scanned_file_path)
-            scanned_file_sha1 = scanned_file.get('sha1')
+            # We keep this directory's hash around until we process the parent
+            # of the directory we are in
+            hash_stack.append(dir_hash)
 
-            if dirpath in dir_hash_store:
-                dir_hash_store[dirpath].update(scanned_file_sha1)
-            else:
-                dir_hash_store[dirpath] = sha1(scanned_file_sha1)
-
-        yield scanned_file
+        present_dir.data['sha1'] = dir_hash.hexdigest()
+        yield present_dir.data
