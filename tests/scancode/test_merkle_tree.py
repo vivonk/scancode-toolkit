@@ -192,4 +192,73 @@ class TestMerkleTree(FileBasedTesting):
         expected_results.dirs[0].files.append(File(file_2))
         expected_results.dirs[1].files.append(File(file_3))
 
-        assert results == expected_results
+        assert expected_results == results
+
+    def test_merkle_tree_as_tree(self):
+        import cStringIO
+        import sys
+        import textwrap
+
+        test_file = self.get_test_loc('merkle_tree/sample.json')
+        scan_results = json.loads(open(test_file).read())['files']
+        root = build_tree(scan_results)
+
+        expected_results = '''\
+            screenshot.png
+            README
+            zlib
+              zutil.h
+              zutil.c
+              deflate.c
+              deflate.h
+              adler32.c
+              zlib.h
+              dotzlib
+                ChecksumImpl.cs
+                LICENSE_1_0.txt
+                AssemblyInfo.cs
+                readme.txt
+              ada
+                zlib.ads
+              gcc_gvmat64
+                gvmat64.S
+              infback9
+                infback9.h
+                infback9.c
+              iostream2
+                zstream_test.cpp
+                zstream.h
+            JGroups
+              EULA
+              LICENSE
+              licenses
+                apache-2.0.txt
+                cpl-1.0.txt
+                lgpl.txt
+                bouncycastle.txt
+                apache-1.1.txt
+              src
+                ImmutableReference.java
+                RouterStubManager.java
+                GuardedBy.java
+                S3_PING.java
+                RouterStub.java
+                RATE_LIMITER.java
+                FixedMembershipToken.java
+            arch
+              zlib.tar.gz
+        '''
+        # Remove leading spaces on every line
+        expected_results = textwrap.dedent(expected_results)
+
+        # We redirect the print calls from as_tree() into a buffer,
+        # then we compare the buffer against `expected_results`
+        # From https://stackoverflow.com/a/22823751
+        stdout_ = sys.stdout # Keep track of the previous value.
+        stream = cStringIO.StringIO()
+        sys.stdout = stream
+        root.as_tree()
+        sys.stdout = stdout_ # restore the previous stdout.
+        results = stream.getvalue()
+
+        assert expected_results == results

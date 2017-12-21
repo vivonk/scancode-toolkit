@@ -79,9 +79,9 @@ class Dir(object):
 
     def as_tree(self, prefix=''):
         for f in self.files:
-            print(prefix, f.data['name'])
+            print(prefix + f.data['name'])
         for d in self.dirs:
-            print(prefix, d.data['name'])
+            print(prefix + d.data['name'])
             d.as_tree(prefix + '  ')
 
 
