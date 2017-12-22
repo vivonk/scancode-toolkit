@@ -50,6 +50,8 @@ Options:
     --mark-source    Set the "is_source" flag to true for directories that contain
                      over 90% of source files as direct children. Has no effect
                      unless the --info scan is requested.
+    --merkle-tree    Build a SHA1 hash for each directory from the hash of the
+                     directories and files within it
     --only-findings  Only return files or directories with findings for the
                      requested scans. Files and directories without findings are
                      omitted (not considering basic file information as findings).

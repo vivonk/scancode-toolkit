@@ -254,11 +254,15 @@ class TestMerkleTree(FileBasedTesting):
         # We redirect the print calls from as_tree() into a buffer,
         # then we compare the buffer against `expected_results`
         # From https://stackoverflow.com/a/22823751
-        stdout_ = sys.stdout # Keep track of the previous value.
+        stdout_ = sys.stdout  # Keep track of the previous value.
         stream = cStringIO.StringIO()
         sys.stdout = stream
+
+        # as_tree will then print out every file and directory within the
+        # directory it visits into `stream`
         root.as_tree()
-        sys.stdout = stdout_ # restore the previous stdout.
+
+        sys.stdout = stdout_  # restore the previous stdout.
         results = stream.getvalue()
 
         assert expected_results == results

@@ -89,19 +89,20 @@ def build_tree(results):
     """
     Return a Dir tree object computed from a list of results
     """
+    def create_empty_dir(path):
+        dir_data = _empty_file_infos()
+        dir_data['path'] = path
+        dir_data['basename'] = file_base_name(path)
+        dir_data['name'] = file_name(path)
+        dir_data['type'] = 'directory'
+        return Dir(dir_data)
+
     results = list(results)
 
     sample_file = results[0]
     sample_file_path = sample_file['path']
     root_path = sample_file_path.split('/')[0]
-
-    root_data = _empty_file_infos()
-    root_data['path'] = root_path
-    root_data['basename'] = root_path
-    root_data['name'] = root_path
-    root_data['type'] = 'directory'
-
-    root = Dir(root_data)
+    root = create_empty_dir(root_path)
     dirs = {root_path: root}
 
     for scanned_file in results:
@@ -112,12 +113,7 @@ def build_tree(results):
         parent = dirs.get(parent_path)
 
         if not parent:
-            parent_data = _empty_file_infos()
-            parent_data['path'] = parent_path
-            parent_data['basename'] = file_base_name(parent_path)
-            parent_data['name'] = file_name(parent_path)
-            parent_data['type'] = 'directory'
-            parent = Dir(parent_data)
+            parent = create_empty_dir(parent_path)
             dirs[parent_path] = parent
 
             # FIXME: we need to check to see if the parent of the new parent directory
@@ -138,12 +134,7 @@ def build_tree(results):
                     else:
                         curr_parent.dirs.append(current)
                 else:
-                    parent_data = _empty_file_infos()
-                    parent_data['path'] = curr_parent_path
-                    parent_data['basename'] = file_base_name(curr_parent_path)
-                    parent_data['name'] = file_name(curr_parent_path)
-                    parent_data['type'] = 'directory'
-                    parent = Dir(parent_data)
+                    parent = create_empty_dir(curr_parent_path)
                     dirs[curr_parent_path] = parent
                     curr_parent = parent
                 current = curr_parent
@@ -161,7 +152,7 @@ def build_tree(results):
 @post_scan_impl
 def build_merkle_tree(active_scans, results):
     """
-    Calculate hash of hashes in directories
+    Build a SHA1 hash for each directory from the hash of the directories and files within it
     """
 
     # FIXME: this is forcing all the scan results to be loaded in memory
@@ -175,7 +166,10 @@ def build_merkle_tree(active_scans, results):
         dir_hash = sha1()
 
         # We add the SHA1 of the files of a directory to the directory hash
-        for file in files:
+        #
+        # For consistency, we add the file hashes in the order of smallest hash
+        # value to largest hash value
+        for file in sorted(files, key=lambda x: x.data['sha1']):
             dir_hash.update(file.data['sha1'])
             yield file.data
 
@@ -186,8 +180,12 @@ def build_merkle_tree(active_scans, results):
             #
             # By walking the tree in a postorder fashion, we visit and process
             # the files and directories within a directory before the directory itself
-            for hash in hash_stack:
+            #
+            # For consistency, we add the directory hashes in the order of smallest
+            # hash value to largest hash value
+            for hash in sorted(hash_stack, key=lambda x: x.hexdigest()):
                 dir_hash.update(hash.hexdigest())
+
             # We no longer need to keep the hashes around because we processed
             # all of them for this directory
             hash_stack = []
