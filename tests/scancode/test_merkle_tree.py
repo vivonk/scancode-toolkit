@@ -33,6 +33,7 @@ from scancode.api import _empty_file_infos
 from scancode.plugin_merkle_tree import Dir
 from scancode.plugin_merkle_tree import File
 from scancode.plugin_merkle_tree import build_tree
+from scancode.plugin_merkle_tree import build_merkle_tree
 
 
 class TestMerkleTree(FileBasedTesting):
@@ -264,5 +265,16 @@ class TestMerkleTree(FileBasedTesting):
 
         sys.stdout = stdout_  # restore the previous stdout.
         results = stream.getvalue()
+
+        assert expected_results == results
+
+    def test_merkle_tree_build_merkle_tree(self):
+        test_file = self.get_test_loc('merkle_tree/build_tree.json')
+        scan_results = json.loads(open(test_file).read())['files']
+        active_scans = ['infos']
+        results = list(build_merkle_tree(active_scans, scan_results))
+
+        expected_results_file = self.get_test_loc('merkle_tree/build_merkle_tree.json')
+        expected_results = json.loads(open(expected_results_file).read())['files']
 
         assert expected_results == results
