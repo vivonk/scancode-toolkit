@@ -43,10 +43,7 @@ class File(object):
         return repr(string_repr)
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.data['path'] == other.data['path']
-        else:
-            return False
+        return isinstance(other, self.__class__) and self.data['path'] == other.data['path']
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -63,10 +60,7 @@ class Dir(object):
         return repr(string_repr)
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.data['path'] == other.data['path']
-        else:
-            return False
+        return isinstance(other, self.__class__) and self.data['path'] == other.data['path']
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -127,7 +121,7 @@ def build_tree(results):
                 curr_parent = dirs.get(curr_parent_path)
                 if curr_parent:
                     for dir in curr_parent.dirs:
-                        if dir.data['path'] == current.data['path']:
+                        if dir == current:
                             dir.dirs = current.dirs
                             dir.files = current.files
                             break
@@ -141,7 +135,17 @@ def build_tree(results):
 
         if isdir:
             d = Dir(scanned_file)
-            parent.dirs.append(d)
+            # We check to see if we had already created this directory before
+            # and if it has been created already, we assign the proper data
+            # for that directory from the scan data
+            for dir in parent.dirs:
+                if dir == d:
+                    dir.data = d.data
+                    break
+            else:
+                # If we do not find the directory, we add our newly created
+                # directory
+                parent.dirs.append(d)
         else:
             f = File(scanned_file)
             parent.files.append(f)
