@@ -241,6 +241,7 @@ setup(
         # See also plugincode.post_scan module for details and doc.
         'scancode_post_scan': [
             'mark-source = scancode.plugin_mark_source:MarkSource',
+            'merkle-tree = scancode.plugin_merkle_tree:MerkleTree',
         ],
 
         # scancode_output_filter is the entry point for filter plugins executed
