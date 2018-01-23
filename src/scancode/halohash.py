@@ -36,7 +36,7 @@ from bitarray import bitdiff
 from commoncode import codec
 
 # FIXME: temporary hack to work around missing feature in scancode 2.0.0rc2
-from samecode import hash as commoncode_hash
+from scancode import hash as commoncode_hash
 
 
 """

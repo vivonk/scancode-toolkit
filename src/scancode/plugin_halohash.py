@@ -29,6 +29,7 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 
+from commoncode import filetype
 from plugincode.scan import ScanPlugin
 from plugincode.scan import scan_impl
 from scancode import CommandLineOption
@@ -61,13 +62,19 @@ def get_halohash(location, **kwargs):
     Return a list of mappings for copyright detected in the file at `location`.
     """
     from scancode.halohash import BitAverageHaloHash
+    results = []
+
+    if not filetype.is_file(location):
+        return results
 
     # fixme: we should read in chunks?
     with open(location, 'rb') as f:
         hashable = f.read()
 
     bah = BitAverageHaloHash(hashable)
-    results = []
+
     result = OrderedDict()
-    result['bah128'] = bah.hexdigest()
+    result['bah128'] = [bah.hexdigest()]
+    results.append(result)
+
     return results

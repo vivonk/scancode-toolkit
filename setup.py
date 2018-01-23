@@ -229,6 +229,7 @@ setup(
             'packages = scancode.plugin_package:PackageScanner',
             'emails = scancode.plugin_email:EmailScanner',
             'urls = scancode.plugin_url:UrlScanner',
+            'halohash = scancode.plugin_halohash:HaloHashScanner',
         ],
 
         # scancode_post_scan is the entry point for post_scan plugins executed
