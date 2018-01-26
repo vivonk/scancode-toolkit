@@ -229,7 +229,7 @@ setup(
             'packages = scancode.plugin_package:PackageScanner',
             'emails = scancode.plugin_email:EmailScanner',
             'urls = scancode.plugin_url:UrlScanner',
-            'halohash = scancode.plugin_halohash:HaloHashScanner',
+            'fingerprints = scancode.plugin_fingerprint:FingerprintScanner',
         ],
 
         # scancode_post_scan is the entry point for post_scan plugins executed
@@ -242,7 +242,6 @@ setup(
         # See also plugincode.post_scan module for details and doc.
         'scancode_post_scan': [
             'mark-source = scancode.plugin_mark_source:MarkSource',
-            'merkle-tree = scancode.plugin_merkle_tree:MerkleTree',
         ],
 
         # scancode_output_filter is the entry point for filter plugins executed

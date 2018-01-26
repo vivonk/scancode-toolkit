@@ -27,12 +27,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from commoncode.fileutils import parent_directory
-from hashlib import sha1
+from collections import OrderedDict
+
+import hashlib
 from plugincode.post_scan import PostScanPlugin
 from plugincode.post_scan import post_scan_impl
-from scancode import CommandLineOption
-from scancode import POST_SCAN_GROUP
 
 
 @post_scan_impl
@@ -43,26 +42,35 @@ class MerkleTree(PostScanPlugin):
 
     needs_info = True
 
-    options = [
-        CommandLineOption(('--merkle-tree',),
-            is_flag=True,default=False,
-            help='Compute the SHA1 hash for each directory from the hash of the directories and files within it',
-            help_group=POST_SCAN_GROUP)
-    ]
-
     def is_enabled(self):
-        return self.is_command_option_enabled('merkle_tree')
+        return self.is_command_option_enabled('fingerprints')
 
-    def process_codebase(self, codebase):
-        dir_hashes = {}
+    def process_codebase(self, codebase, **kwargs):
+        """
+        Compute a Merkle fingerprint using existing SHA1s by treating the codebase
+        as a Merkle tree
+        """
 
-        for resource in codebase.walk(topdown=False, sort=True):
-            resource_path = resource.get_path()
-            resource_parent_path = parent_directory(resource_path).strip('/')
+        # We walk bottom-up to ensure we process the children of directories
+        # before we calculate and assign the Merkle fingerprint for directories
+        for resource in codebase.walk(topdown=False):
+            fingerprint = []
 
-            if not resource.is_file:
-                resource.sha1 = dir_hashes[resource_path].hexdigest()
-            if resource_parent_path in dir_hashes:
-                dir_hashes[resource_parent_path].update(resource.sha1)
-            else:
-                dir_hashes[resource_parent_path] = sha1(resource.sha1)
+            # Collect the SHA1s of files and the previously computed Merkle SHA1's
+            # of directories
+            if resource.children():
+
+                # Collect files SHA1s
+                sha1s = [bytes(r.sha1) for r in resource.children() if r.sha1]
+                for child in resource.children():
+                    scans = child.get_scans()
+                    if not scans:
+                        continue
+                    fingerprints = scans.get('fingerprints', {})
+                    
+                    ms = fingerprints.get('merkle_sha1', b'')
+                    sha1s.append(bytes(ms))
+                merkle = hashlib.sha1(b''.join(sorted(sha1s))).hexdigest()
+                fingerprint['merkle_sha1'] = merkle
+            scan = OrderedDict(fingerprints=fingerprint)
+            resource.put_scans(scan)
