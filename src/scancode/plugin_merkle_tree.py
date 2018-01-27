@@ -54,23 +54,37 @@ class MerkleTree(PostScanPlugin):
         # We walk bottom-up to ensure we process the children of directories
         # before we calculate and assign the Merkle fingerprint for directories
         for resource in codebase.walk(topdown=False):
-            fingerprint = []
-
-            # Collect the SHA1s of files and the previously computed Merkle SHA1's
-            # of directories
             if resource.children():
-
-                # Collect files SHA1s
-                sha1s = [bytes(r.sha1) for r in resource.children() if r.sha1]
+                sha1s = []
                 for child in resource.children():
-                    scans = child.get_scans()
-                    if not scans:
-                        continue
-                    fingerprints = scans.get('fingerprints', {})
-                    
-                    ms = fingerprints.get('merkle_sha1', b'')
-                    sha1s.append(bytes(ms))
+                    sha1 = child.sha1
+                    if sha1:
+                        sha1s.append(bytes(sha1))
+                    m_sha1 = get_merkle_sha1(child)
+                    if m_sha1:
+                        sha1s.append(bytes(m_sha1))
                 merkle = hashlib.sha1(b''.join(sorted(sha1s))).hexdigest()
-                fingerprint['merkle_sha1'] = merkle
-            scan = OrderedDict(fingerprints=fingerprint)
-            resource.put_scans(scan)
+                set_merkle_sha1(resource, merkle)
+
+
+def get_merkle_sha1(resource):
+    scans = resource.get_scans()
+    if not scans:
+        return
+    fingerprints = scans.get('fingerprints', [])
+    if fingerprints:
+        fingerprint = fingerprints[0]
+        return fingerprint.get('merkle_sha1') or None
+
+
+def set_merkle_sha1(resource, merkle_sha1):
+    scans = resource.get_scans()
+    fingerprints = scans.get('fingerprints', [])
+    if fingerprints:
+        fingerprint = fingerprints[0]
+    else:
+        fingerprint = OrderedDict()
+        fingerprints.append(fingerprint)
+    fingerprint['merkle_sha1'] = merkle_sha1
+    scans['fingerprints'] = fingerprints
+    resource.put_scans(scans)

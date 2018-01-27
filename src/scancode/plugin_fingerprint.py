@@ -72,4 +72,4 @@ def get_fingerprint(location, **kwargs):
 
     bah = BitAverageHaloHash(hashable)
 
-    return [OrderedDict(bah128=[bah.hexdigest()])]
+    return [OrderedDict(bah128=bah.hexdigest())]
