@@ -32,6 +32,7 @@ from collections import OrderedDict
 import hashlib
 from plugincode.post_scan import PostScanPlugin
 from plugincode.post_scan import post_scan_impl
+from scancode import halohash
 
 
 @post_scan_impl
@@ -56,28 +57,40 @@ class MerkleTree(PostScanPlugin):
         for resource in codebase.walk(topdown=False):
             if resource.children():
                 sha1s = []
+                bah128s = []
                 for child in resource.children():
                     sha1 = child.sha1
                     if sha1:
                         sha1s.append(bytes(sha1))
-                    m_sha1 = get_merkle_sha1(child)
+                    m_sha1 = get_fingerprint_field(child, 'merkle_sha1')
                     if m_sha1:
                         sha1s.append(bytes(m_sha1))
-                merkle = hashlib.sha1(b''.join(sorted(sha1s))).hexdigest()
-                set_merkle_sha1(resource, merkle)
+
+                    bah128 = get_fingerprint_field(child, 'bah128')
+                    if bah128:
+                        bah128s.append(bytes(bah128))
+                    m_bah128 = get_fingerprint_field(child, 'merkle_bah128')
+                    if m_bah128:
+                        bah128s.append(bytes(m_bah128))
+
+                merkle_sha1 = hashlib.sha1(b''.join(sorted(sha1s))).hexdigest()
+                set_fingerprint_field(resource, 'merkle_sha1', merkle_sha1)
+
+                merkle_bah128 = halohash.BitAverageHaloHash(b''.join(sorted(bah128s))).hexdigest()
+                set_fingerprint_field(resource, 'merkle_bah128', merkle_bah128)
 
 
-def get_merkle_sha1(resource):
+def get_fingerprint_field(resource, field):
     scans = resource.get_scans()
     if not scans:
         return
     fingerprints = scans.get('fingerprints', [])
     if fingerprints:
         fingerprint = fingerprints[0]
-        return fingerprint.get('merkle_sha1') or None
+        return fingerprint.get(field) or None
 
 
-def set_merkle_sha1(resource, merkle_sha1):
+def set_fingerprint_field(resource, field, field_value):
     scans = resource.get_scans()
     fingerprints = scans.get('fingerprints', [])
     if fingerprints:
@@ -85,6 +98,6 @@ def set_merkle_sha1(resource, merkle_sha1):
     else:
         fingerprint = OrderedDict()
         fingerprints.append(fingerprint)
-    fingerprint['merkle_sha1'] = merkle_sha1
+    fingerprint[field] = field_value
     scans['fingerprints'] = fingerprints
     resource.put_scans(scans)
