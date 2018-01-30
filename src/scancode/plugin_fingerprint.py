@@ -30,6 +30,8 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 
 from commoncode import filetype
+from licensedcode.tokenize import ngrams
+from licensedcode.tokenize import select_ngrams
 from plugincode.scan import ScanPlugin
 from plugincode.scan import scan_impl
 from scancode import CommandLineOption
@@ -63,13 +65,23 @@ def get_fingerprint(location, **kwargs):
     """
     from scancode.halohash import BitAverageHaloHash
 
+    chunk_size = 1024
+    ngram_length = 4
+
     if not filetype.is_file(location):
         return []
 
-    # fixme: we should read in chunks?
+    slices = []
     with open(location, 'rb') as f:
-        hashable = f.read()
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                break
+            slices.extend(ngrams(chunk, ngram_length))
 
-    bah = BitAverageHaloHash(hashable)
+    bah = BitAverageHaloHash()
+    for slice in select_ngrams(slices):
+        hashable = b''.join(slice)
+        bah.update(hashable)
 
     return [OrderedDict(bah128=bah.hexdigest())]
