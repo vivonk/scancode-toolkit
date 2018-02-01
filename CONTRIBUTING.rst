@@ -197,3 +197,4 @@ To run tests in parallel on eight processors::
 To run tests verbosely, displaying all print statements to terminal::
 
     py.test  -vvs
+
