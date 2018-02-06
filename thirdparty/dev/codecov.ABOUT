@@ -3,7 +3,7 @@ about_resource:
 download_url: 
     - https://pypi.python.org/packages/47/f3/5abe7a91ad9c3ba3d280e5a4bcdef76c90361af2c6afe04fcedc2a2b0ff4/codecov-2.0.9-py2.py3-none-any.whl
 
-version: 2.0.9
+version: 2.0.15
 
 name: codecov
 home_url: https://github.com/codecov/codecov-python
